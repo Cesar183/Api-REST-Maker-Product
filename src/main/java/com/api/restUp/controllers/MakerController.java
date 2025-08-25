@@ -15,7 +15,7 @@ public class MakerController {
     @Autowired
     private MakerService service;
 
-    @GetMapping("/all")
+    @GetMapping
     public ResponseEntity<?> findAll(){
         return ResponseEntity.status(HttpStatus.OK).body(service.listAll()
                 .stream()
@@ -38,7 +38,7 @@ public class MakerController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @PostMapping("/save")
+    @PostMapping
     public ResponseEntity<?> save(@RequestBody MakerDto makerDto){
         if (makerDto.getName().isBlank()){
             return ResponseEntity.badRequest().build();
@@ -46,26 +46,20 @@ public class MakerController {
         var maker = service.save(Maker.builder()
                 .name(makerDto.getName())
                 .build());
-        return ResponseEntity.status(HttpStatus.OK).body(MakerDto.builder()
-                .id(maker.getId())
-                .name(maker.getName())
-                .productList(maker.getProductList())
-                .build());
+        return ResponseEntity.status(HttpStatus.OK).body(maker);
     }
 
-    @PutMapping("/update")
+    @PutMapping("/{id}")
     public ResponseEntity<?> update(@PathVariable Long id, @RequestBody MakerDto makerDto){
         return service.findById(id)
                 .map(maker -> {
-                    maker.setId(makerDto.getId());
                     maker.setName(makerDto.getName());
-                    maker.setProductList(makerDto.getProductList());
                     return ResponseEntity.status(HttpStatus.CREATED).body(maker);
                 })
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id){
         return service.findById(id)
                 .map(maker -> {

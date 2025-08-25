@@ -61,18 +61,32 @@ public class ProductController {
             ResponseEntity.badRequest().build();
         }
         var product = service.save(Product.builder()
-                        .id(productDto.getId())
                         .name(productDto.getName())
                         .price(productDto.getPrice())
                         .maker(productDto.getMaker())
                         .build());
-        return ResponseEntity.status(HttpStatus.CREATED).body(ProductDto.builder()
-                .id(product.getId())
-                .name(product.getName())
-                .price(product.getPrice())
-                .maker(product.getMaker())
-                .build());
+        return ResponseEntity.status(HttpStatus.CREATED).body(product);
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody ProductDto productDto){
+        return service.findById(id)
+                .map(product -> {
+                    product.setName(productDto.getName());
+                    product.setPrice(productDto.getPrice());
+                    product.setMaker(productDto.getMaker());
+                    return ResponseEntity.status(HttpStatus.CREATED).body(product);
+                })
+                .orElse(ResponseEntity.notFound().build());
+    }
 
+    @DeleteMapping("{id}")
+    public ResponseEntity<?> delete(@PathVariable Long id){
+        return service.findById(id)
+                .map(product -> {
+                    service.delete(id);
+                    return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+                })
+                .orElse(ResponseEntity.notFound().build());
+    }
 }

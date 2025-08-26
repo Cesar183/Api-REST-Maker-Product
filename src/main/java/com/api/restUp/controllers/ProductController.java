@@ -75,7 +75,7 @@ public class ProductController {
                     product.setName(productDto.getName());
                     product.setPrice(productDto.getPrice());
                     product.setMaker(productDto.getMaker());
-                    return ResponseEntity.status(HttpStatus.CREATED).body(product);
+                    return ResponseEntity.status(HttpStatus.CREATED).body(service.save(product));
                 })
                 .orElse(ResponseEntity.notFound().build());
     }

@@ -54,7 +54,7 @@ public class MakerController {
         return service.findById(id)
                 .map(maker -> {
                     maker.setName(makerDto.getName());
-                    return ResponseEntity.status(HttpStatus.CREATED).body(maker);
+                    return ResponseEntity.status(HttpStatus.CREATED).body(service.save(maker));
                 })
                 .orElse(ResponseEntity.notFound().build());
     }
